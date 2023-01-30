@@ -63,6 +63,13 @@ class TestCaseTest(TestCase):
         result.testFailed()
         assert("1 run, 1 failed" == result.summary())
 
+    def testSuite(self):
+        suite = TestSuite()
+        suite.add(WasRun("testMethod"))
+        suite.add(WasRun("testBrokenMethod"))
+        result = suite.run()
+        assert("2 run, 1 failed" == result.summary())
+
 
 class TestResult:
 
@@ -80,7 +87,22 @@ class TestResult:
         return "%d run, %d failed" % (self.runCount, self.failureCount)
 
 
+class TestSuite:
+    def __init__(self):
+        self.tests = []
+
+    def add(self, test):
+        self.tests.append(test)
+
+    def run(self):
+        result = TestResult()
+        for test in self.tests:
+            test.run(result)
+        return result
+
+
 TestCaseTest("testTemplateMethod").run()
 TestCaseTest("testResult").run()
 TestCaseTest("testFailedResultFormatting").run()
 TestCaseTest("testFailedResult").run()
+TestCaseTest("testSuite").run()
